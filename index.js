@@ -7,8 +7,8 @@ require('./DBconnection');
 const { v4: uuidv4 } = require('uuid');
 const AdminCollection = require('./AdminSchema');
 const TailorSchema = require('./TailorSchema');
-const Razorpay = require('razorpay')
-const twilio = require('twilio');
+// const Razorpay = require('razorpay')
+// const twilio = require('twilio');
 const bodyParser = require('body-parser');
 const moment = require('moment')
 const app = express();
@@ -21,12 +21,12 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 require('dotenv').config();
-// Twilio credentials
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+// // Twilio credentials
+// const accountSid = process.env.TWILIO_ACCOUNT_SID;
+// const authToken = process.env.TWILIO_AUTH_TOKEN;
+// const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-const client = twilio(accountSid, authToken);
+// const client = twilio(accountSid, authToken);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
