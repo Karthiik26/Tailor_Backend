@@ -8,7 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const AdminCollection = require('./AdminSchema');
 const TailorSchema = require('./TailorSchema');
 const Razorpay = require('razorpay')
-const twilio = require('twilio');
+// const twilio = require('twilio');
 const bodyParser = require('body-parser');
 const moment = require('moment')
 const app = express();
@@ -24,9 +24,9 @@ require('dotenv').config();
 // Twilio credentials
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
-const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
+// const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
 
-const client = twilio(accountSid, authToken);
+// const client = twilio(accountSid, authToken);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -146,23 +146,23 @@ function generateVerificationCode() {
 }
 
 // Send msg with twilio
-app.post('/send-verification', (req, res) => {
-    const { phoneNumber } = req.body;
-    // const verificationCode = generateVerificationCode(); // Implement this function
-    client.messages.create({
-        body: `Your Order Successful`,
-        from: twilioPhoneNumber,
-        to: '+91' + req.body.to
-    })
-        .then(message => {
-            console.log(message.sid);
-            res.send({ success: true, message: 'Verification code sent successfully' });
-        })
-        .catch(err => {
-            console.error(err);
-            res.status(500).send({ success: false, message: 'Failed to send verification code' });
-        });
-});
+// app.post('/send-verification', (req, res) => {
+//     const { phoneNumber } = req.body;
+//     // const verificationCode = generateVerificationCode(); // Implement this function
+//     client.messages.create({
+//         body: `Your Order Successful`,
+//         from: twilioPhoneNumber,
+//         to: '+91' + req.body.to
+//     })
+//         .then(message => {
+//             console.log(message.sid);
+//             res.send({ success: true, message: 'Verification code sent successfully' });
+//         })
+//         .catch(err => {
+//             console.error(err);
+//             res.status(500).send({ success: false, message: 'Failed to send verification code' });
+//         });
+// });
 
 // send msg with fast2sms
 
