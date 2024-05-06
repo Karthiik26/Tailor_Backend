@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 
-PORT = 4500;
+PORT = process.env.PORT || 4500;
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });

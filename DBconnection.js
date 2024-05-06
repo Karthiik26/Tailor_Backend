@@ -1,2 +1,2 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://127.0.0.1:27017/TailorApplication');
+mongoose.connect('mongodb+srv://imkarthiik26:UCvCqcaaEs2iUhTs@tailordb.shtrlhw.mongodb.net/TailorApplication');
