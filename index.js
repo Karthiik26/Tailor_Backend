@@ -1688,10 +1688,10 @@ app.put('/DeleteDesign/:id', async (req, res) => {
 
 // Payment Integration
 
-const RazorpayInstance = new Razorpay({
-    key_id: process.env.RazorPay_Id_Key,
-    key_secret: process.env.RazorPaySecret_Key
-});
+// const RazorpayInstance = new Razorpay({
+//     key_id: process.env.RazorPay_Id_Key,
+//     key_secret: process.env.RazorPaySecret_Key
+// });
 
 // User CheckOut Cart Items
 app.post('/CheckOutCartItems/CreateOrder/:UserId/:AdminId/:grandTotal', async (req, res) => {
