@@ -17,21 +17,13 @@ const io = require('socket.io')(server);
 
 // port
 PORT = 4500;
-
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 require('dotenv').config();
-// // Twilio credentials
-// const accountSid = process.env.TWILIO_ACCOUNT_SID;
-// const authToken = process.env.TWILIO_AUTH_TOKEN;
-// const twilioPhoneNumber = process.env.TWILIO_PHONE_NUMBER;
-
-// const client = twilio(accountSid, authToken);
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
 app.use(cors());
 app.use(express.json());
 
@@ -49,14 +41,11 @@ const customCors = (req, res, next) => {
         res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         return res.status(200).json({});
     }
-
     next();
 };
 
 // Use custom CORS middleware
 app.use(customCors);
-
-
 // app.use(cors({ origin: 'http://localhost:4200' }));
 
 var unirest = require('unirest');
@@ -85,6 +74,7 @@ var unirest = require('unirest');
 
 
 // Image Posting Image
+
 app.post('/user/:userId/image', upload.single('userImage'), async (req, res) => {
     try {
         const userId = req.params.userId;
@@ -169,6 +159,7 @@ function generateVerificationCode() {
 
 // Users--------------------------------------
 // Post Data Into DB Signup
+
 app.post('/Signup', async (req, res) => {
     try {
         let data = new collection(req.body);
@@ -206,11 +197,15 @@ app.post('/Login', async (req, res) => {
     }
 });
 
-
 // listing the UserDeatils
 app.get('/UserDetails/:_id', async (req, res) => {
-    let data = await collection.findById({ _id: req.params._id });
-    res.send(data);
+    try {
+        let data = await collection.findById({ _id: req.params._id });
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Address fetching
@@ -292,8 +287,6 @@ app.put('/Updating/User/:UserId', async (req, res) => {
     }
 });
 
-
-
 app.put('/Address/:_id', async (req, res) => {
     let data = await collection.updateOne(
         { _id: req.params._id },
@@ -358,14 +351,19 @@ app.put("/AddressUpdate/:_id/:AddressId", async (req, res) => {
 
 // User Deleting Address 
 app.put('/DeletingAddress/:_id', async (req, res) => {
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $pull: { Address: req.body },
-        }
-    );
-    res.send(data)
-    // console.log(data)
+    try {
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $pull: { Address: req.body },
+            }
+        );
+        res.send(data)
+        // console.log(data)
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Appointment Code
@@ -712,157 +710,197 @@ app.put('/UpdateAppointmentStatus/:UserId/:TailorId/:AppointmentId/:status', asy
 
 // Formal ke under ka Shirt
 app.put('/Shirt/:_id', async (req, res) => {
-    const measurement = {
-        ShirtMeasurementId: uuidv4(),
-        FormalPantCheckBox: req.body.FormalPantCheckBox,
-        FormalShirtCheckBox: req.body.FormalShirtCheckBox,
-        Armhole: req.body.Armhole
-    };
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.Formal.Shirt': measurement }
-        },
-        { new: true }
-    );
-    if (!data) {
-        return res.status(404).json({ error: "Datta Not Found" });
-    }
+    try {
+        const measurement = {
+            ShirtMeasurementId: uuidv4(),
+            FormalPantCheckBox: req.body.FormalPantCheckBox,
+            FormalShirtCheckBox: req.body.FormalShirtCheckBox,
+            Armhole: req.body.Armhole
+        };
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.Formal.Shirt': measurement }
+            },
+            { new: true }
+        );
+        if (!data) {
+            return res.status(404).json({ error: "Datta Not Found" });
+        }
 
-    console.log(data);
-    res.send(data);
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Formal Ke Under Pant
 app.put('/Pant/:_id', async (req, res) => {
-    const measurement = {
-        PantMeasurementId: uuidv4(),
-        FormalPantCheckBox: req.body.FormalPantCheckBox,
-        FormalShirtCheckBox: req.body.FormalShirtCheckBox,
-        Thighs: req.body.Thighs,
+    try {
+        const measurement = {
+            PantMeasurementId: uuidv4(),
+            FormalPantCheckBox: req.body.FormalPantCheckBox,
+            FormalShirtCheckBox: req.body.FormalShirtCheckBox,
+            Thighs: req.body.Thighs,
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.Formal.Pant': measurement }
+            },
+            { new: true }
+        );
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.Formal.Pant': measurement }
-        },
-        { new: true }
-    );
-    console.log(data);
-    res.send(data);
 });
 
 // Formal Ke Under ShirtPant
 app.put('/ShirtPant/:_id', async (req, res) => {
-    const measurement = {
-        PantMeasurementId: uuidv4(),
-        FormalPantCheckBox: req.body.FormalPantCheckBox,
-        FormalShirtCheckBox: req.body.FormalShirtCheckBox,
-        Thighs: req.body.Thighs,
-        Armhole: req.body.Armhole
+    try {
+        const measurement = {
+            PantMeasurementId: uuidv4(),
+            FormalPantCheckBox: req.body.FormalPantCheckBox,
+            FormalShirtCheckBox: req.body.FormalShirtCheckBox,
+            Thighs: req.body.Thighs,
+            Armhole: req.body.Armhole
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.Formal.ShirtPant': measurement }
+            },
+            { new: true }
+        );
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.Formal.ShirtPant': measurement }
-        },
-        { new: true }
-    );
-    console.log(data);
-    res.send(data);
 });
 
 // Kurtapayjama ke under Kurta
 app.put('/Kurta/:_id', async (req, res) => {
-    const measurement = {
-        KurtaMeasurementId: uuidv4(),
-        KurtaCheckBox: req.body.KurtaCheckBox,
-        payjamaCheckBox: req.body.payjamaCheckBox,
-        KurtaChest: req.body.KurtaChest,
+    try {
+        const measurement = {
+            KurtaMeasurementId: uuidv4(),
+            KurtaCheckBox: req.body.KurtaCheckBox,
+            payjamaCheckBox: req.body.payjamaCheckBox,
+            KurtaChest: req.body.KurtaChest,
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.KurtaPayjama.Kurta': measurement }
+            },
+            { new: true }
+        );
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.KurtaPayjama.Kurta': measurement }
-        },
-        { new: true }
-    );
-    console.log(data);
-    res.send(data);
 });
 
 // KurtaPayjama ke under Payjama
 app.put('/Payjama/:_id', async (req, res) => {
-    const measurement = {
-        PayajamaMeasurementId: uuidv4(),
-        KurtaCheckBox: req.body.KurtaCheckBox,
-        payamaCheckBox: req.body.payamaCheckBox,
-        PantLength: req.body.PantLength,
+    try {
+        const measurement = {
+            PayajamaMeasurementId: uuidv4(),
+            KurtaCheckBox: req.body.KurtaCheckBox,
+            payamaCheckBox: req.body.payamaCheckBox,
+            PantLength: req.body.PantLength,
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.KurtaPayjama.Payjama': measurement }
+            },
+            { new: true }
+        );
+        res.send(data);
+        console.log(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.KurtaPayjama.Payjama': measurement }
-        },
-        { new: true }
-    );
-    res.send(data);
-    console.log(data);
 });
 
 // KURTAPAYJAMA KE UNDER DONO
 app.put('/KurtaPayjama/:_id', async (req, res) => {
-    const measurement = {
-        KurtaCheckBox: req.body.KurtaCheckBox,
-        payamaCheckBox: req.body.payamaCheckBox,
-        PantLength: req.body.PantLength,
-        KurtaChest: req.body.KurtaChest,
+    try {
+        const measurement = {
+            KurtaCheckBox: req.body.KurtaCheckBox,
+            payamaCheckBox: req.body.payamaCheckBox,
+            PantLength: req.body.PantLength,
+            KurtaChest: req.body.KurtaChest,
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.KurtaPayjama.KurtaPayjama': measurement }
+            },
+            { new: true }
+        );
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.KurtaPayjama.KurtaPayjama': measurement }
-        },
-        { new: true }
-    );
-    console.log(data);
-    res.send(data);
 });
 
 // Balzer
 app.put('/Blazer/:_id', async (req, res) => {
-    const measurement = {
-        BlazerMeasurementId: uuidv4(),
-        BlazerChest: req.body.BlazerChest,
-        BlazerWeist: req.body.Blazerweist,
+    try {
+        const measurement = {
+            BlazerMeasurementId: uuidv4(),
+            BlazerChest: req.body.BlazerChest,
+            BlazerWeist: req.body.Blazerweist,
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.Blazer': measurement }
+            },
+            { new: true }
+        );
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.Blazer': measurement }
-        },
-        { new: true }
-    );
-    console.log(data);
-    res.send(data);
 });
 
 // Sherwani
 app.put('/Sherwani/:_id', async (req, res) => {
-    const measurement = {
-        SherwaniMeasurementId: uuidv4(),
-        SherwaniChest: req.body.SherwaniChest,
-        SherwaniWeist: req.body.Sherwaniweist,
+    try {
+        const measurement = {
+            SherwaniMeasurementId: uuidv4(),
+            SherwaniChest: req.body.SherwaniChest,
+            SherwaniWeist: req.body.Sherwaniweist,
+        }
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $push: { 'SwingMeasurementDeatils.Sherwani': measurement }
+            },
+            { new: true }
+        );
+        console.log(data);
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $push: { 'SwingMeasurementDeatils.Sherwani': measurement }
-        },
-        { new: true }
-    );
-    console.log(data);
-    res.send(data);
 });
 
 // Add To Cart
@@ -937,14 +975,19 @@ app.post('/Addtocart/:UserId/:ClothId', async (req, res) => {
 
 
 // GettingCart Items
-app.get('/AddtoCartGetting/:_id', async (req, res) => {
-    let data = await collection.findById({ _id: req.params._id });
-    if (!data) {
-        return res.status(404).json({ message: 'User not found' });
-    }
-    res.send(data.AddToCart);
-});
 
+app.get('/AddtoCartGetting/:_id', async (req, res) => {
+    try {
+        let data = await collection.findById({ _id: req.params._id });
+        if (!data) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.send(data.AddToCart);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
+});
 
 // Update Cloth Quantity
 // Route to update ClothQunatityUser
@@ -1052,8 +1095,6 @@ app.post('/CartPrice/:UserId', async (req, res) => {
     }
 });
 
-
-
 // UpdatingSignlePrice
 app.put('/updateParticularClothPriceUser/:userId/:ClothId', async (req, res) => {
     const userId = req.params.userId;
@@ -1099,14 +1140,19 @@ app.put('/updateParticularClothPriceUser/:userId/:ClothId', async (req, res) => 
 
 // Remove item
 app.put('/RemovingClothItem/:_id', async (req, res) => {
-    const ClothId = req.body.ClothId;
-    let data = await collection.updateOne(
-        { _id: req.params._id },
-        {
-            $pull: { AddToCart: { ClothId } } // shorthand for { ClothId: ClothId }
-        }
-    );
-    res.send(data);
+    try {
+        const ClothId = req.body.ClothId;
+        let data = await collection.updateOne(
+            { _id: req.params._id },
+            {
+                $pull: { AddToCart: { ClothId } } // shorthand for { ClothId: ClothId }
+            }
+        );
+        res.send(data);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 
@@ -1165,29 +1211,37 @@ app.put('/AddTheAddress/:UserId', async (req, res) => {
     }
 });
 
-
-
 // Admin------------Area-----------------------------------------
 // ADMIN SignUp
 app.post('/AdminSignup', async (req, res) => {
-    let data = new AdminCollection(req.body);
-    let result = await data.save();
-    res.send(result);
+    try {
+        let data = new AdminCollection(req.body);
+        let result = await data.save();
+        res.send(result);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Admin Login
 app.post('/AdminLogin', async (req, res) => {
-    let data = await AdminCollection.findOne(req.body);
-    if (req.body.AdminEmail && req.body.AdminPassword) {
-        if (data) {
-            res.json(data); // Sending JSON response
+    try {
+        let data = await AdminCollection.findOne(req.body);
+        if (req.body.AdminEmail && req.body.AdminPassword) {
+            if (data) {
+                res.json(data); // Sending JSON response
+            } else {
+                res.json({ result: "User Not Found" }); // Sending JSON response
+            }
         } else {
-            res.json({ result: "User Not Found" }); // Sending JSON response
+            res.status(400).json({ error: "Bad Request" }); // Sending JSON response for bad requests
         }
-    } else {
-        res.status(400).json({ error: "Bad Request" }); // Sending JSON response for bad requests
-    }
 
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Post (Add) Cloth Products
@@ -1234,7 +1288,6 @@ app.post('/ClothInsert/:_id', upload.single('image'), async (req, res) => {
     }
 });
 
-
 // Cloth Update In Admin
 // Update Cloth Products
 app.put('/ClothUpdate/:clothId', upload.single('image'), async (req, res) => {
@@ -1279,19 +1332,24 @@ app.put('/ClothUpdate/:clothId', upload.single('image'), async (req, res) => {
     }
 });
 
-
 // GettingData Of Cloth
 app.get('/GettingClothFromAdmin/:_id/:ClothId', async (req, res) => {
-    let data = await AdminCollection.findById({ _id: req.params._id });
-    if (!data) {
-        return res.status(404).json({ message: 'User not found' });
+    try {
+        let data = await AdminCollection.findById({ _id: req.params._id });
+        if (!data) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const Clothdata = data.Cloth.find(Cloth => Cloth.ClothId === req.params.ClothId);
+        if (!Clothdata) {
+            return res.status(404).json({ message: 'Address not found for this user' });
+        }
+        res.json(Clothdata);
+        console.log(Clothdata);
+
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
-    const Clothdata = data.Cloth.find(Cloth => Cloth.ClothId === req.params.ClothId);
-    if (!Clothdata) {
-        return res.status(404).json({ message: 'Address not found for this user' });
-    }
-    res.json(Clothdata);
-    console.log(Clothdata);
 });
 
 // Getting Cloths Data using Cloth id
@@ -1319,28 +1377,42 @@ app.get('/GettingDetailCloth/:clothId', async (req, res) => {
     }
 });
 
-
 // listing the Cloth Items
 app.get('/GettingCloth/:_id', async (req, res) => {
-    let data = await AdminCollection.findById({ _id: req.params._id }, "Cloth");
-    res.send(data.Cloth);
+    try {
+        let data = await AdminCollection.findById({ _id: req.params._id }, "Cloth");
+        res.send(data.Cloth);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // orders Getting
 app.get('/Admin/Orders/:_id', async (req, res) => {
-    let data = await AdminCollection.findById({ _id: req.params._id }, "Orders");
-    res.send(data.Orders);
+    try {
+        let data = await AdminCollection.findById({ _id: req.params._id }, "Orders");
+        res.send(data.Orders);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Admin Deleting Cloth 
 app.put('/DeletingCloth/:_id', async (req, res) => {
-    let data = await AdminCollection.updateOne(
-        { _id: req.params._id },
-        {
-            $pull: { Cloth: req.body },
-        }
-    );
-    res.send(data)
+    try {
+        let data = await AdminCollection.updateOne(
+            { _id: req.params._id },
+            {
+                $pull: { Cloth: req.body },
+            }
+        );
+        res.send(data)
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
     // console.log(data)
 });
 
@@ -1370,7 +1442,6 @@ app.get('/GettingClothImages/:userId/images', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-
 
 // Creating Image Way
 app.get('/api/cloth-images', async (req, res) => {
@@ -1463,18 +1534,20 @@ app.post('/TailorSignUp', upload.single('TailorImage'), async (req, res) => {
     }
 });
 
-
-
 // Tailor -----------------------------Area----------------------------
-
 // Getting Tailor By Id
 app.get('/GettingTailorId/:TailorId', async (req, res) => {
-    const tailorId = req.params.TailorId;
-    const tailor = await TailorSchema.findById(tailorId)
-    if (tailor) {
-        res.json(tailor);
-    } else {
-        res.status(404).json({ error: 'Tailor not found' });
+    try {
+        const tailorId = req.params.TailorId;
+        const tailor = await TailorSchema.findById(tailorId)
+        if (tailor) {
+            res.json(tailor);
+        } else {
+            res.status(404).json({ error: 'Tailor not found' });
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
 });
 
@@ -1505,21 +1578,26 @@ app.post('/changeTailorpassword/:_id', async (req, res) => {
     }
 });
 
-
 // Tailor Login
 app.post('/TailorLogin', async (req, res) => {
-    let data = await TailorSchema.findOne(req.body);
-    if (req.body.TailorPassword && req.body.TailorEmail && req.body.TailorName) {
-        if (data) {
-            res.send(data);
-        } else {
+    try {
+        let data = await TailorSchema.findOne(req.body);
+        if (req.body.TailorPassword && req.body.TailorEmail && req.body.TailorName) {
+            if (data) {
+                res.send(data);
+            } else {
 
-            res.send({ result: "User Not Found " });
+                res.send({ result: "User Not Found " });
+            }
+        } else {
+            res.send({
+                result: "USER NOT FOUND"
+            });
         }
-    } else {
-        res.send({
-            result: "USER NOT FOUND"
-        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
 });
 
@@ -1558,30 +1636,33 @@ app.put('/tailorUpdate/:id', async (req, res) => {
     }
 });
 
-
-
 // Tailor Post Inserting
 app.put('/TailorDesignPost/:_id', async (req, res) => {
-
-    let data = await TailorSchema.updateOne(
-        { _id: req.params._id },
-        {
-            $push: {
-                TailorPost: {
-                    DesignId: uuidv4(),
-                    DesignImg: {
-                        type: String,
-                        default: Buffer
-                    },
-                    DesignName: req.body.ClothName,
-                    DesignDescription: req.body.ClothDescription,
+    try {
+        let data = await TailorSchema.updateOne(
+            { _id: req.params._id },
+            {
+                $push: {
+                    TailorPost: {
+                        DesignId: uuidv4(),
+                        DesignImg: {
+                            type: String,
+                            default: Buffer
+                        },
+                        DesignName: req.body.ClothName,
+                        DesignDescription: req.body.ClothDescription,
+                    }
                 }
-            }
-        },
-        { new: true }
-    );
-    res.send(data);
-    console.log(data);
+            },
+            { new: true }
+        );
+        res.send(data);
+        console.log(data);
+
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Design Update In Tailor
@@ -1619,8 +1700,13 @@ app.put("/TailorDesignUpdate/:id/:ClothId", async (req, res) => {
 // listing the Tailor 
 app.get('/GettingTaiors', async (req, res) => {
     // let data = await AdminCollection.findById({ _id: req.params._id });
-    let data2 = await TailorSchema.find();
-    res.send(data2);
+    try {
+        let data2 = await TailorSchema.find();
+        res.send(data2);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Delete the Tailor
@@ -1644,8 +1730,14 @@ app.delete('/Delete/Tailor/:id', async (req, res) => {
 
 // listing the Users 
 app.get('/GettingUsers', async (req, res) => {
-    let data2 = await collection.find();
-    res.send(data2);
+    try {
+        let data2 = await collection.find();
+        res.send(data2);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
+
 });
 
 // Delete User
@@ -1669,26 +1761,34 @@ app.delete('/Delete/User/:id', async (req, res) => {
 
 // listing the Tailor Design Items
 app.get('/GettingDesign/:_id', async (req, res) => {
-    let data = await TailorSchema.findById({ _id: req.params._id }, "TailorPost");
-    res.send(data.TailorPost);
+    try {
+        let data = await TailorSchema.findById({ _id: req.params._id }, "TailorPost");
+        res.send(data.TailorPost);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
+
 });
 
 // Admin Deleting Cloth 
 app.put('/DeleteDesign/:id', async (req, res) => {
-    let data = await TailorSchema.updateOne(
-        { _id: req.params.id },
-        {
-            $pull: { TailorPost: req.body },
-        }
-    );
-    res.send(data)
+    try {
+        let data = await TailorSchema.updateOne(
+            { _id: req.params.id },
+            {
+                $pull: { TailorPost: req.body },
+            }
+        );
+        res.send(data)
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
     // console.log(data)
 });
 
-
-
 // Payment Integration
-
 // const RazorpayInstance = new Razorpay({
 //     key_id: process.env.RazorPay_Id_Key,
 //     key_secret: process.env.RazorPaySecret_Key
@@ -1805,46 +1905,52 @@ app.put('/CancellIng/:UserId/:AdminId/', async (req, res) => {
     const AdminId = req.params.AdminId;
     const OrderId = req.body.OrderId;
 
-    // Find user and admin
-    let user = await collection.findById(UserId);
-    let admin = await AdminCollection.findById(AdminId);
+    try {
+        // Find user and admin
+        let user = await collection.findById(UserId);
+        let admin = await AdminCollection.findById(AdminId);
 
-    // Find order index in user's order confirmation
-    let userOrderIndex = user.OrderConfirmation.findIndex(item => item.OrderId === OrderId);
+        // Find order index in user's order confirmation
+        let userOrderIndex = user.OrderConfirmation.findIndex(item => item.OrderId === OrderId);
 
-    // Find order index in admin's orders
-    let adminOrderIndex = admin.Orders.findIndex(item => item.OrderId === OrderId);
+        // Find order index in admin's orders
+        let adminOrderIndex = admin.Orders.findIndex(item => item.OrderId === OrderId);
 
-    if (userOrderIndex !== -1 && adminOrderIndex !== -1) {
-        // Remove order from user's order confirmation
-        user.OrderConfirmation.splice(userOrderIndex, 1);
+        if (userOrderIndex !== -1 && adminOrderIndex !== -1) {
+            // Remove order from user's order confirmation
+            user.OrderConfirmation.splice(userOrderIndex, 1);
 
-        // Remove order from admin's orders
-        admin.Orders.splice(adminOrderIndex, 1);
+            // Remove order from admin's orders
+            admin.Orders.splice(adminOrderIndex, 1);
 
-        // Save updated user and admin documents
-        await user.save();
-        await admin.save();
+            // Save updated user and admin documents
+            await user.save();
+            await admin.save();
 
-        let date = Date.now();
-        let formDate = moment(date).format('DD/MM/YYYY');
+            let date = Date.now();
+            let formDate = moment(date).format('DD/MM/YYYY');
 
-        // Emit Socket.IO event to notify the user
-        io.to(UserId).emit('orderCancelled', { orderId: OrderId });
+            // Emit Socket.IO event to notify the user
+            io.to(UserId).emit('orderCancelled', { orderId: OrderId });
 
-        // Save notification in user's collection
-        const notification = {
-            From: admin.AdminName,
-            message: `Your order with ID <b> ${OrderId} </b> has been cancelled.`,
-            timestamp: formDate
-        };
-        user.Notifications.push(notification);
-        await user.save();
+            // Save notification in user's collection
+            const notification = {
+                From: admin.AdminName,
+                message: `Your order with ID <b> ${OrderId} </b> has been cancelled.`,
+                timestamp: formDate
+            };
+            user.Notifications.push(notification);
+            await user.save();
 
 
-        res.send("Order cancelled successfully.");
-    } else {
-        res.status(404).send("Order not found.");
+            res.send("Order cancelled successfully.");
+        } else {
+            res.status(404).send("Order not found.");
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
 });
 
@@ -1887,14 +1993,12 @@ app.post('/send/Delivery/message/:userId/:userOrderId/:AdminId', async (req, res
     }
 });
 
-// 
 function generateOrderId() {
     return Math.floor(100000000 + Math.random() * 900000000);
 }
 
 app.post('/CreateOrder', async (req, res) => {
     try {
-
         const orderId = generateOrderId();
         res.json({ orderId });
     } catch (error) {
@@ -1904,7 +2008,6 @@ app.post('/CreateOrder', async (req, res) => {
 });
 
 app.post('/Success', async (req, res) => {
-
     try {
         const { orderId, paymentId } = req.body;
         // Here you might want to perform further actions based on successful payment
@@ -1927,12 +2030,16 @@ app.get('/Cancel', async (req, res) => {
 
 // Getting Message
 app.get('/Notification/:_id', async (req, res) => {
-    let user = await collection.findById({ _id: req.params._id });
-    res.send(user.Notifications);
+    try {
+        let user = await collection.findById({ _id: req.params._id });
+        return res.send(user.Notifications);
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
+    }
 });
 
 // Assuming you have the necessary imports and MongoDB connection already set up
-
 app.get('/ConfirmedGettingAppointment', async (req, res) => {
     try {
         // Retrieve all users' data from the collection
