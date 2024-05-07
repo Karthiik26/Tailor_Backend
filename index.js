@@ -1187,7 +1187,7 @@ app.post('/AdminLogin', async (req, res) => {
     } else {
         res.status(400).json({ error: "Bad Request" }); // Sending JSON response for bad requests
     }
-    
+
 });
 
 // Post (Add) Cloth Products
@@ -1973,6 +1973,16 @@ app.post('/change-password/:_id', async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         return res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
+app.get('/', async (req, res) => {
+    try {
+        return res.json({ message: 'Hello Welcomw' });
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).json({ message: 'Hello Error' });
     }
 });
 
