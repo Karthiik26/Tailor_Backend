@@ -28,7 +28,8 @@ app.use(cors());
 app.use(express.json());
 
 const customCors = (req, res, next) => {
-    const allowedOrigins = [process.env.FRONT_END_KEY, 'http://192.168.0.109:4200'];
+    // const allowedOrigins = [process.env.FRONT_END_KEY, 'http://192.168.0.109:4200'];
+    const allowedOrigins = [process.env.FRONT_END_KEY];
 
     // Check if the request origin is allowed
     if (allowedOrigins.includes(req.headers.origin)) {
