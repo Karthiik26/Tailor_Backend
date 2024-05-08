@@ -13,7 +13,7 @@ const moment = require('moment')
 const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
-require('./DBconnection');
+// require('./DBconnection');
 
 const mongoose = require('mongoose');
 // mongoose.connect(process.env.DB_CONNECTION)
