@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 // mongoose.connect(process.env.DB_CONNECTION)
-mongoose.connect("mongodb+srv://imkarthiik26:UCvCqcaaEs2iUhTs@tailordb.shtrlhw.mongodb.net/TailorApplication")
+// mongoose.connect("mongodb+srv://imkarthiik26:UCvCqcaaEs2iUhTs@tailordb.shtrlhw.mongodb.net/TailorApplication")
+// mongoose.connect("mongodb://127.0.0.1:27017/TailorApplication")
+mongoose.connect("mongodb+srv://imkarthiik26:7bEX4PkTizP2LizG@tailorapp-db.q5nuy3b.mongodb.net/?retryWrites=true&w=majority&appName=TailorAPP-DB")
 
 const db = mongoose.connection;
 
