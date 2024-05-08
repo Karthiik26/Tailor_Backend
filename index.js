@@ -24,7 +24,7 @@ require('dotenv').config();
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-// app.use(cors());
+app.use(cors());
 app.use(express.json());
 
 const customCors = (req, res, next) => {
@@ -47,7 +47,7 @@ const customCors = (req, res, next) => {
 
 // Use custom CORS middleware
 app.use(customCors);
-app.use(cors({ origin: 'https://tailor-frontend-sand.vercel.app' }));
+app.use(cors({ origin: 'http://localhost:4200' }));
 
 var unirest = require('unirest');
 
