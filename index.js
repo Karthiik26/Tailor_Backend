@@ -55,7 +55,7 @@ app.use(customCors);
 var unirest = require('unirest');
 
 
-const DB = "mongodb+srv://imkarthiik26:7bEX4PkTizP2LizG@tailorapp-db.q5nuy3b.mongodb.net/TailorApplication?retryWrites=true&w=majority&appName=TailorAPP-DB"
+const DB = "mongodb+srv://imkarthiik26:f6hoCpiPpsEmJDUe@tailorapp-db.q5nuy3b.mongodb.net/TailorApplication?retryWrites=true&w=majority&appName=TailorAPP-DB"
 mongoose.connect(DB).then(()=>{
     console.log('Db Connected Successfullyy');
 }).catch((err)=>console.log('Db NOT Connected'))
