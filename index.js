@@ -17,7 +17,7 @@ const io = require('socket.io')(server);
 const mongoose = require('mongoose');
 
 // port
-PORT = 4600;
+PORT = 4500;
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
