@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-mongoose.connect(process.env.DB_CONNECTION)
+// mongoose.connect(process.env.DB_CONNECTION)
+mongoose.connect("mongodb+srv://imkarthiik26:UCvCqcaaEs2iUhTs@tailordb.shtrlhw.mongodb.net/TailorApplication")
 
 const db = mongoose.connection;
 
