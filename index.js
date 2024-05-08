@@ -14,38 +14,10 @@ const app = express();
 const server = http.createServer(app);
 const io = require('socket.io')(server);
 // require('./DBconnection');
-
 const mongoose = require('mongoose');
-// mongoose.connect(process.env.DB_CONNECTION)
-// mongoose.connect("mongodb+srv://imkarthiik26:UCvCqcaaEs2iUhTs@tailordb.shtrlhw.mongodb.net/TailorApplication")
-// mongoose.connect("mongodb://127.0.0.1:27017/TailorApplication")
-mongoose.connect("mongodb+srv://imkarthiik26:7bEX4PkTizP2LizG@tailorapp-db.q5nuy3b.mongodb.net/?retryWrites=true&w=majority&appName=TailorAPP-DB")
-
-const db = mongoose.connection;
-
-db.on("error", (error) => {
-  console.warn("MongoDB connection error:", error);
-});
-
-db.once("open", () => {
-  console.log("Connected to MongoDB:");
-});
-
-// Handle disconnects
-db.on("disconnected", () => {
-  console.warn("MongoDB disconnected");
-});
-
-// Close the MongoDB connection when the Node process is terminated
-process.on("SIGINT", () => {
-  db.close(() => {
-    console.log("MongoDB connection closed through app termination");
-    process.exit(0);
-  });
-});
 
 // port
-PORT = 4500;
+PORT = 4600;
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
@@ -55,6 +27,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(express.json());
+
+
 
 const customCors = (req, res, next) => {
     // const allowedOrigins = [process.env.FRONT_END_KEY, 'http://192.168.0.109:4200'];
@@ -76,9 +50,16 @@ const customCors = (req, res, next) => {
 
 // Use custom CORS middleware
 app.use(customCors);
-app.use(cors({ origin: 'http://localhost:4200' }));
+// app.use(cors({ origin: 'http://localhost:4200' }));
 
 var unirest = require('unirest');
+
+
+const DB = "mongodb+srv://imkarthiik26:7bEX4PkTizP2LizG@tailorapp-db.q5nuy3b.mongodb.net/TailorApplication?retryWrites=true&w=majority&appName=TailorAPP-DB"
+mongoose.connect(DB).then(()=>{
+    console.log('Db Connected Successfullyy');
+}).catch((err)=>console.log('Db NOT Connected'))
+
 
 // 100 rs baro otp loo
 // var req = unirest("GET", "https://www.fast2sms.com/dev/bulkV2");
