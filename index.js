@@ -52,10 +52,11 @@ const customCors = (req, res, next) => {
 app.use(customCors);
 // app.use(cors({ origin: 'http://localhost:4200' }));
 
-var unirest = require('unirest');
 
+// const DB = "mongodb+srv://imkarthiik26:*#M8ur_SdJyL9mf@tailorapp-db.q5nuy3b.mongodb.net/?retryWrites=true&w=majority&appName=TailorAPP-DB"
 
-const DB = "mongodb+srv://imkarthiik26:f6hoCpiPpsEmJDUe@tailorapp-db.q5nuy3b.mongodb.net/TailorApplication?retryWrites=true&w=majority&appName=TailorAPP-DB"
+const DB = "mongodb+srv://imkarthiik26:*#M8ur_SdJyL9mf@tailorapp-db.q5nuy3b.mongodb.net/TailorApplication?retryWrites=true&w=majority&appName=TailorAPP-DB";
+
 mongoose.connect(DB).then(()=>{
     console.log('Db Connected Successfullyy');
 }).catch((err)=>console.log('Db NOT Connected'))
